@@ -2,6 +2,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Set;
 public class HitungSudoku {
 	public static HashMap<String,Integer> hm = new HashMap<String,Integer>();
 	public static BufferedWriter bw;
+	public static ArrayList<String> isiUser = new ArrayList<String>();
 	public static void main(String[] args) {
 		
 		
@@ -195,11 +197,14 @@ public class HitungSudoku {
 								for(int j=1;j<=akar;j++){
 									if(kelipatan%n==0){
 										kelipatan=0;
-										System.out.println((""+((akar*m)+i)+","+((akar*p)+j)+","+k)+" 0" );
+										//System.out.println((""+((akar*m)+i)+","+((akar*p)+j)+","+k)+" 0" );
+										//System.out.println(hm.get(""+((akar*m)+i)+","+((akar*p)+j)+","+k)+" 0" );
+										bw.write(hm.get(""+((akar*m)+i)+","+((akar*p)+j)+","+k)+" 0"+"\n" );
 										kelipatan++;
 										hit +=1;
 									}else{
-										System.out.print((""+((akar*m)+i)+","+((akar*p)+j)+","+k)+" " );
+										//System.out.print(hm.get(""+((akar*m)+i)+","+((akar*p)+j)+","+k)+" " );
+										bw.write(hm.get(""+((akar*m)+i)+","+((akar*p)+j)+","+k)+" ");;
 										kelipatan++;
 										
 									}
@@ -211,5 +216,47 @@ public class HitungSudoku {
 					}
 				}
 				System.out.println("Jumlah hitung = " + hit);
+				
+				
+				//mengecek tiap subgrid at most cuma ada 1 digit
+				for(int k = 1; k<=n;k++){
+					for(int m=0; m<=(akar-1); m++){
+						for(int p =0; p<=(akar-1);p++){
+							for(int i = 1;i<=akar;i++){
+								for(int j=1;j<=akar;j++){
+									for(int q = j+1;q<=akar;q++){
+										//System.out.println("-"+(""+((akar*m)+i)+","+((akar*p)+j)+","+k)+" -"+(((akar*m)+i)+","+((akar*p)+q)+","+ k)+" 0");
+										bw.write("-"+hm.get(""+((akar*m)+i)+","+((akar*p)+j)+","+k)+" -"+hm.get(((akar*m)+i)+","+((akar*p)+q)+","+ k)+" 0"+"\n");
+										hit += 1;
+									}
+								}
+								
+							}
+						}
+					}
+				}
+				System.out.println("Jumlah hitung = " + hit);
+				
+				for(int k = 1; k<=n;k++){
+					for(int m=0; m<=(akar-1); m++){
+						for(int p =0; p<=(akar-1);p++){
+							for(int i = 1;i<=akar;i++){
+								for(int j=1;j<=akar;j++){
+									for(int q = i+1;q<=akar;q++){
+										for(int r = 1;r<=akar;r++){
+											//System.out.println("-"+(""+((akar*m)+i)+","+((akar*p)+j)+","+k)+" -"+(((akar*m)+q)+","+((akar*p)+r)+","+ k)+" 0");
+											bw.write("-"+hm.get(""+((akar*m)+i)+","+((akar*p)+j)+","+k)+" -"+hm.get(((akar*m)+q)+","+((akar*p)+r)+","+ k)+" 0"+"\n");
+											hit += 1;
+										}
+										
+									}
+								}
+								
+							}
+						}
+					}
+				}
+				System.out.println("Jumlah hitung = " + hit);
+				
 	}
 }
