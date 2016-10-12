@@ -16,7 +16,7 @@ public class HitungSudoku {
 		
 		
 		int n = 9;
-		int inputUser = 1;
+		int inputUser = 0;
 		
 		// if file doesnt exists, then create it
 		try {
