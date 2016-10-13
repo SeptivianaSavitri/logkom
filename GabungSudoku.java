@@ -32,7 +32,8 @@ public class GabungSudoku extends JFrame {
     static ArrayList<String> coordinateX = new ArrayList<String>();
     static ArrayList<String> coordinateY = new ArrayList<String>();
     static JTextField[][] textfields = new JTextField[n][n];
-    static JButton button;
+    static JButton solve;
+    static JButton clear;
     static JTextField txt;
     static int counter = 0;
     public static HashMap<String,Integer> hm = new HashMap<String,Integer>();
@@ -42,6 +43,7 @@ public class GabungSudoku extends JFrame {
    	public static ArrayList<String> isiUser = new ArrayList<String>();
     String result;
     
+    
     public GabungSudoku() {
     	this.setSize(600,400);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -49,11 +51,15 @@ public class GabungSudoku extends JFrame {
         this.buttonHandler();
     }
     
-    public GabungSudoku(Container pane) {
+    /**public GabungSudoku(Container pane) {
     	this.setSize(300,200);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         GabungSudoku.addComponentsToPane(pane);
         this.buttonHandler();
+    }**/
+    
+    public static void infoBox(String infoMsg, String title) {
+    	JOptionPane.showMessageDialog(null,  infoMsg, "InfoBox: " + title, JOptionPane.INFORMATION_MESSAGE);
     }
     
     public static void addComponentsToPane(Container pane) {
@@ -76,15 +82,42 @@ public class GabungSudoku extends JFrame {
     	
     }
     
-    button = new JButton("Solve");
+    
+    solve = new JButton("Solve");
     c.fill = GridBagConstraints.HORIZONTAL;
     c.gridx = GridBagConstraints.EAST;//top padding
     c.gridy = GridBagConstraints.EAST;       //third row
-    pane.add(button, c);
+    pane.add(solve, c);
+    
+    clear = new JButton("Clear");
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = GridBagConstraints.EAST;//top padding
+    c.gridy = GridBagConstraints.EAST;       //third row
+    pane.add(clear, c);
     }
     
     public void buttonHandler() {
-    	button.addActionListener(new ActionListener() {
+    	clear.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				for (int i = 0; i < n; i++) {
+			    	for (int j = 0; j < n; j++) {
+			    		textfields[i][j].setText("");
+			    	}
+			    	
+			    }
+
+			    hasilMinisat.clear();
+			    isiUser.clear();
+			    hmresult.clear();
+			    hm.clear();
+			}
+    		
+    	});
+    	
+    	solve.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -93,19 +126,43 @@ public class GabungSudoku extends JFrame {
 					for (int j = 0; j < n; j++) {
 					  
 					  if(!textfields[i][j].getText().isEmpty()) {
+						  
+						  if(textfields[i][j].getText().matches("[a-zA-z]{1}")) {
+							  GabungSudoku.infoBox("Sorry, input must be integer between 1 to " + n, "Wrong input");
+							  return;
+						  }
+						  
 						  p = Integer.parseInt(textfields[i][j].getText());
-						  if(p>9 && p<1) {
-							  GabungSudoku boardBaru = new GabungSudoku(new Container());
-							  JOptionPane.showMessageDialog(boardBaru, "Eggs are not supposed to be green.");
-							  boardBaru.setVisible(true);
+						  if(p>n || p<1) {
+							  GabungSudoku.infoBox("Sorry, your input must be between 1 to " + n, "Wrong input");
+							  return;
 						  }
 					    result = (i+1) + "," + (j+1) + "," + textfields[i][j].getText();
 					    isiUser.add(result);
-						System.out.println(result);
+						
 					  }
 				    }
 			    }
-				carisolusi(9,isiUser);
+				try {
+					carisolusi(9,isiUser);
+					for(int i =0; i< hasilMinisat.size();i++){
+				    	String tmp = hasilMinisat.get(i);
+				    	System.out.println(hasilMinisat.get(i));
+				    	System.out.println("iniii angkanya "+ hm.get(hasilMinisat.get(i)));
+
+
+
+				    	String[] splitOrdinat = tmp.split(",");
+				    	int x = Integer.parseInt(splitOrdinat[0]) -1;
+				    	int y = Integer.parseInt(splitOrdinat[1]) -1;
+				    	String value = splitOrdinat[2];
+				    	textfields[x][y].setText(value);
+				    }
+					
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				// nyambung ke minisat
 				
 				//baca minisat
@@ -168,6 +225,7 @@ public class GabungSudoku extends JFrame {
             public void run() {
 
             	GabungSudoku t = new GabungSudoku();
+            	t.setTitle("Sudoku " + n + "x" + n);
                 t.setVisible(true);
 
             }
@@ -179,7 +237,7 @@ public class GabungSudoku extends JFrame {
     }
    
 
-	public static void carisolusi(int n, ArrayList<String> arr){
+	public static void carisolusi(int n, ArrayList<String> arr) throws InterruptedException{
 		try {
 			int inputUser = arr.size();
 			int jumlahVar = (int) Math.pow(n, 3);
@@ -208,44 +266,59 @@ public class GabungSudoku extends JFrame {
 			if(isiUser.size()!=0){
 				for(int i =0;i<isiUser.size();i++){
 					bw.write(hm.get(isiUser.get(i))+" 0"+"\n");
+					System.out.println(isiUser.get(i));
+
 				}
 			}
 			bw.close();
 			
 			//kode untuk menjalankan minisat
-			//Process process = Runtime.getRuntime().exec("minisat filename.txt result.txt");
-			//System.out.println("Done");
+			Process process = Runtime.getRuntime().exec("minisat filename.txt result.txt");
+			System.out.println("Done");
 			
 			
+			/**String[] args = new String[] {"/bin/bash", "-c", "minisat filename.txt result.txt", "", ""};
+			Process process = new ProcessBuilder(args).start();
+			process.waitFor();
+			**/
 			//ngebaca output
 			FileReader in = new FileReader("result.txt");
 		    BufferedReader br = new BufferedReader(in);
 			String line = br.readLine();
 			if(line.equalsIgnoreCase("SAT")){
-				System.out.println("Problem Satisfiable");
+					System.out.println("Problem Satisfiable");
+					String barisdua = br.readLine();
+			    String[] angka = barisdua.split(" ");
+			    int hasilSplit=0;
+			    
+			    //Meletakkan angka pada koordinat yang benar. Hasil jawaban benar ada pada HashMap hasilMinisat
+			    for(int i = 0;i<angka.length;i++){
+			    	hasilSplit= Integer.parseInt(angka[i]);
+			    	if(hasilSplit>0){
+			    		//System.out.println(""+hasilSplit);
+			    		hasilMinisat.add(""+hmresult.get(hasilSplit));
+			    		//System.out.println(""+hmresult.get(hasilSplit));
+			    	}
+			    }
+			    System.out.println("KOORDINAT YANG BENAR");
+			    for(int i =0; i< hasilMinisat.size();i++){
+			    	String tmp = hasilMinisat.get(i);
+			    	System.out.println(hasilMinisat.get(i));
+			    	String[] splitOrdinat = tmp.split(",");
+			    	int x = Integer.parseInt(splitOrdinat[0]) -1;
+			    	int y = Integer.parseInt(splitOrdinat[1]) -1;
+			    	int value = Integer.parseInt(splitOrdinat[2]) ;
+			    	
+			    }
 			}else{
 
 				System.out.println("Tidak ada solusi!");
+				GabungSudoku.infoBox("Sorry, your input is unsatisfiable" + n, "Unsatifiable");
+				hasilMinisat.clear();
+			    isiUser.clear();
 			}
 		    //System.out.println(line);
-		    String barisdua = br.readLine();
-		    String[] angka = barisdua.split(" ");
-		    int hasilSplit=0;
 		    
-		    //Meletakkan angka pada koordinat yang benar. Hasil jawaban benar ada pada HashMap hasilMinisat
-		    for(int i = 0;i<angka.length;i++){
-		    	hasilSplit= Integer.parseInt(angka[i]);
-		    	if(hasilSplit>0){
-		    		//System.out.println(""+hasilSplit);
-		    		hasilMinisat.add(""+hmresult.get(hasilSplit));
-		    		//System.out.println(""+hmresult.get(hasilSplit));
-		    	}
-		    }
-		    System.out.println("KOORDINAT YANG BENAR");
-		    for(int i =0; i< hasilMinisat.size();i++){
-		    	System.out.println(hasilMinisat.get(i));
-		    	
-		    }
 		    in.close();
 			
 
