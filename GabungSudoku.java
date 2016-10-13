@@ -113,6 +113,8 @@ public class GabungSudoku extends JFrame {
 			    isiUser.clear();
 			    hmresult.clear();
 			    hm.clear();
+			    System.out.println(hasilMinisat.size());
+
 			}
     		
     	});
@@ -147,8 +149,8 @@ public class GabungSudoku extends JFrame {
 					carisolusi(9,isiUser);
 					for(int i =0; i< hasilMinisat.size();i++){
 				    	String tmp = hasilMinisat.get(i);
-				    	System.out.println(hasilMinisat.get(i));
-				    	System.out.println("iniii angkanya "+ hm.get(hasilMinisat.get(i)));
+				    	System.out.println(tmp);
+				    	System.out.println("iniii angkanya "+ hm.get(tmp));
 
 
 
@@ -157,6 +159,7 @@ public class GabungSudoku extends JFrame {
 				    	int y = Integer.parseInt(splitOrdinat[1]) -1;
 				    	String value = splitOrdinat[2];
 				    	textfields[x][y].setText(value);
+				    	hasilMinisat.clear();
 				    }
 					
 				} catch (InterruptedException e1) {
@@ -281,13 +284,15 @@ public class GabungSudoku extends JFrame {
 			Process process = new ProcessBuilder(args).start();
 			process.waitFor();
 			**/
-			//ngebaca output
+			//membaca output
 			FileReader in = new FileReader("result.txt");
 		    BufferedReader br = new BufferedReader(in);
 			String line = br.readLine();
 			if(line.equalsIgnoreCase("SAT")){
 					System.out.println("Problem Satisfiable");
 					String barisdua = br.readLine();
+					System.out.println(barisdua);
+
 			    String[] angka = barisdua.split(" ");
 			    int hasilSplit=0;
 			    
@@ -296,7 +301,11 @@ public class GabungSudoku extends JFrame {
 			    	hasilSplit= Integer.parseInt(angka[i]);
 			    	if(hasilSplit>0){
 			    		//System.out.println(""+hasilSplit);
+			    		System.out.println(hasilSplit);
+			    		System.out.println("nilai yang masuk ke minisat"+hmresult.get(hasilSplit));
+			    		
 			    		hasilMinisat.add(""+hmresult.get(hasilSplit));
+
 			    		//System.out.println(""+hmresult.get(hasilSplit));
 			    	}
 			    }
@@ -518,7 +527,7 @@ public class GabungSudoku extends JFrame {
 				}
 				//System.out.println("Jumlah hitung = " + hit);
 				
-				for(int k = 1; k<=n;k++){
+				for(int k = 1; k<=n;k++)
 					for(int m=0; m<=(akar-1); m++){
 						for(int p =0; p<=(akar-1);p++){
 							for(int i = 1;i<=akar;i++){
@@ -541,4 +550,3 @@ public class GabungSudoku extends JFrame {
 				
 	}
 
-}
