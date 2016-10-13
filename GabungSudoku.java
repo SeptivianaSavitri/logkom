@@ -207,7 +207,7 @@ public class GabungSudoku extends JFrame {
 			//memasukan constraint yang berasal dari masukan user
 			if(isiUser.size()!=0){
 				for(int i =0;i<isiUser.size();i++){
-					bw.write(hm.get(isiUser.get(i))+"\n");
+					bw.write(hm.get(isiUser.get(i))+" 0"+"\n");
 				}
 			}
 			bw.close();
@@ -240,6 +240,11 @@ public class GabungSudoku extends JFrame {
 		    		hasilMinisat.add(""+hmresult.get(hasilSplit));
 		    		//System.out.println(""+hmresult.get(hasilSplit));
 		    	}
+		    }
+		    System.out.println("KOORDINAT YANG BENAR");
+		    for(int i =0; i< hasilMinisat.size();i++){
+		    	System.out.println(hasilMinisat.get(i));
+		    	
 		    }
 		    in.close();
 			
