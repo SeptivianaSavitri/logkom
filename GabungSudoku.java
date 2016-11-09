@@ -26,7 +26,8 @@ public class GabungSudoku extends JFrame {
     final static boolean shouldFill = true;
     final static boolean shouldWeightX = true;
     final static boolean RIGHT_TO_LEFT = false;
-    static int n = 9;
+    static String inputDimension; 
+    static int n;
     static ArrayList<String> inputs = new ArrayList<String>();
     static ArrayList<JTextField> texts = new ArrayList<JTextField>();
     static ArrayList<String> coordinateX = new ArrayList<String>();
@@ -113,7 +114,7 @@ public class GabungSudoku extends JFrame {
 			    isiUser.clear();
 			    hmresult.clear();
 			    hm.clear();
-			    System.out.println(hasilMinisat.size());
+			    //System.out.println(hasilMinisat.size());
 
 			}
     		
@@ -146,21 +147,24 @@ public class GabungSudoku extends JFrame {
 				    }
 			    }
 				try {
-					carisolusi(9,isiUser);
+					carisolusi(n,isiUser);
+					for(int i =0; i< hasilMinisat.size();i++){
+						System.out.println(hasilMinisat.get(i));
+					}
 					for(int i =0; i< hasilMinisat.size();i++){
 				    	String tmp = hasilMinisat.get(i);
-				    	System.out.println(tmp);
-				    	System.out.println("iniii angkanya "+ hm.get(tmp));
+				    	//System.out.println(tmp);
+				    	//System.out.println("iniii angkanya "+ hm.get(tmp));
 
-
+//hm key : koordinat value : angka
 
 				    	String[] splitOrdinat = tmp.split(",");
 				    	int x = Integer.parseInt(splitOrdinat[0]) -1;
 				    	int y = Integer.parseInt(splitOrdinat[1]) -1;
 				    	String value = splitOrdinat[2];
 				    	textfields[x][y].setText(value);
-				    	hasilMinisat.clear();
-				    }
+				    	//hasilMinisat.clear();
+				    }hasilMinisat.clear();
 					
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block
@@ -226,7 +230,8 @@ public class GabungSudoku extends JFrame {
 
             @Override
             public void run() {
-
+            	inputDimension = JOptionPane.showInputDialog("enter first integer");
+            	n = Integer.parseInt(inputDimension);
             	GabungSudoku t = new GabungSudoku();
             	t.setTitle("Sudoku " + n + "x" + n);
                 t.setVisible(true);
@@ -269,7 +274,7 @@ public class GabungSudoku extends JFrame {
 			if(isiUser.size()!=0){
 				for(int i =0;i<isiUser.size();i++){
 					bw.write(hm.get(isiUser.get(i))+" 0"+"\n");
-					System.out.println(isiUser.get(i));
+					//System.out.println(isiUser.get(i));
 
 				}
 			}
@@ -277,6 +282,8 @@ public class GabungSudoku extends JFrame {
 			
 			//kode untuk menjalankan minisat
 			Process process = Runtime.getRuntime().exec("minisat filename.txt result.txt");
+			process.waitFor();
+			System.out.println("Masih proses minisat");
 			System.out.println("Done");
 			
 			
@@ -285,13 +292,16 @@ public class GabungSudoku extends JFrame {
 			process.waitFor();
 			**/
 			//membaca output
-			FileReader in = new FileReader("result.txt");
-		    BufferedReader br = new BufferedReader(in);
+
+			System.out.println("Masuk br");
+		    BufferedReader br = new BufferedReader(new FileReader("result.txt"));
 			String line = br.readLine();
 			if(line.equalsIgnoreCase("SAT")){
 					System.out.println("Problem Satisfiable");
 					String barisdua = br.readLine();
-					System.out.println(barisdua);
+					System.out.println("Ini baris 2: " +barisdua);
+					String baristiga = br.readLine();
+					System.out.println("Ini baris 3: " +baristiga);
 
 			    String[] angka = barisdua.split(" ");
 			    int hasilSplit=0;
@@ -301,8 +311,8 @@ public class GabungSudoku extends JFrame {
 			    	hasilSplit= Integer.parseInt(angka[i]);
 			    	if(hasilSplit>0){
 			    		//System.out.println(""+hasilSplit);
-			    		System.out.println(hasilSplit);
-			    		System.out.println("nilai yang masuk ke minisat"+hmresult.get(hasilSplit));
+			    		//System.out.println(hasilSplit);
+			    		//System.out.println("nilai yang masuk ke minisat"+hmresult.get(hasilSplit));
 			    		
 			    		hasilMinisat.add(""+hmresult.get(hasilSplit));
 
@@ -312,7 +322,7 @@ public class GabungSudoku extends JFrame {
 			    System.out.println("KOORDINAT YANG BENAR");
 			    for(int i =0; i< hasilMinisat.size();i++){
 			    	String tmp = hasilMinisat.get(i);
-			    	System.out.println(hasilMinisat.get(i));
+			    	//System.out.println(hasilMinisat.get(i));
 			    	String[] splitOrdinat = tmp.split(",");
 			    	int x = Integer.parseInt(splitOrdinat[0]) -1;
 			    	int y = Integer.parseInt(splitOrdinat[1]) -1;
@@ -328,7 +338,7 @@ public class GabungSudoku extends JFrame {
 			}
 		    //System.out.println(line);
 		    
-		    in.close();
+		    br.close();
 			
 
 		} catch (IOException e) {
@@ -354,8 +364,8 @@ public class GabungSudoku extends JFrame {
 		for(int i = 1; i<=n;i++){
 			for(int j = 1; j<=n;j++){
 				for(int k =1;k<=n;k++){
-					hm.put(""+i+","+j+","+k, code);
-					hmresult.put(code, ""+i+","+j+","+k);
+					hm.put(""+i+","+j+","+k, code); //hm key : koordinat value : angka
+					hmresult.put(code, ""+i+","+j+","+k); //hmresult key: angka , value : koordinat
 					code++;				
 				}	
 			}
