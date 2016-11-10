@@ -27,12 +27,12 @@ public class GabungSudoku extends JFrame {
     final static boolean shouldWeightX = true;
     final static boolean RIGHT_TO_LEFT = false;
     static String inputDimension; 
-    static int n;
+    static int n = helo();
     static ArrayList<String> inputs = new ArrayList<String>();
     static ArrayList<JTextField> texts = new ArrayList<JTextField>();
     static ArrayList<String> coordinateX = new ArrayList<String>();
     static ArrayList<String> coordinateY = new ArrayList<String>();
-    static JTextField[][] textfields = new JTextField[n][n];
+    static JTextField[][] textfields =  new JTextField[n][n];;
     static JButton solve;
     static JButton clear;
     static JTextField txt;
@@ -50,6 +50,13 @@ public class GabungSudoku extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         GabungSudoku.addComponentsToPane(this.getContentPane());
         this.buttonHandler();
+    }
+    public static int helo(){
+    	inputDimension = JOptionPane.showInputDialog("enter the dimention");
+    	n = Integer.parseInt(inputDimension);
+    	System.out.println(n);
+    	//System.out.println(textfields.length);
+    	return n;
     }
     
     /**public GabungSudoku(Container pane) {
@@ -230,8 +237,12 @@ public class GabungSudoku extends JFrame {
 
             @Override
             public void run() {
-            	inputDimension = JOptionPane.showInputDialog("enter first integer");
-            	n = Integer.parseInt(inputDimension);
+            	//inputDimension = JOptionPane.showInputDialog("enter first integer");
+            	//n = Integer.parseInt(inputDimension);
+            	//System.out.println(n);
+        
+            	//System.out.println(textfields.length);
+            	
             	GabungSudoku t = new GabungSudoku();
             	t.setTitle("Sudoku " + n + "x" + n);
                 t.setVisible(true);
@@ -281,8 +292,8 @@ public class GabungSudoku extends JFrame {
 			bw.close();
 			
 			//kode untuk menjalankan minisat
-			Process process = Runtime.getRuntime().exec("minisat filename.txt result.txt");
-			process.waitFor();
+			//Process process = Runtime.getRuntime().exec("minisat filename.txt result.txt");
+			//process.waitFor();
 			System.out.println("Masih proses minisat");
 			System.out.println("Done");
 			
@@ -559,4 +570,3 @@ public class GabungSudoku extends JFrame {
 				//System.out.println("Jumlah hitung = " + hit);
 				
 	}
-
